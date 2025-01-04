@@ -160,6 +160,7 @@ void Darts::handlePointsScreen(Button *button) {
 // TODO Anzahl der Würfe zählen, und Avg Scores anzeigen
 void Darts::handleGameScreen(int idx, Button *button) {
   if (strcmp(button->getLabel(), "X") == 0) {
+    init();
     nextScreen = SCREEN_START;
   } else if (strcmp(button->getLabel(), "Delete") == 0) {
     currentPoints = 0;

@@ -8,8 +8,9 @@ enum Screen {
   SCREEN_START = 1,
   SCREEN_PLAYER = 2,
   SCREEN_POINTS = 3,
-  SCREEN_GAME = 4,
-  SCREEN_DONE = 5
+  SCREEN_BEST_OF = 4,
+  SCREEN_GAME = 5,
+  SCREEN_DONE = 6
 };
 const uint8_t MAX_BUTTONS = 25;
 const uint8_t MAX_PLAYERS = 2;
@@ -23,6 +24,8 @@ private:
   Button *buttons[MAX_BUTTONS];
   int buttonCount;
   int numberPlayer;
+  // Best of how many games
+  int bestOf;
   // Number of points to get
   int points;
   // Who is the current player
@@ -35,9 +38,17 @@ private:
   int dartFactor;
   // To store the remaining points for each player
   int playerPoints[MAX_PLAYERS];
+  // To store the number of won sets
+  int playerSets[MAX_PLAYERS];
+  // Stores the number of throws
+  int totalPlayerThrows[MAX_PLAYERS];
+  // Stores the total points
+  int totalPlayerPoints[MAX_PLAYERS];
+
 
   Button **drawScreenStart();
   Button **drawScreenPlayer();
+  Button **drawScreenBestOf();
   Button **drawScreenPoints();
   Button **drawScreenGame();
   Button **drawScreenDone();
@@ -46,9 +57,11 @@ private:
   void drawScreenTitle(const char *title);
   void handleStartScreen(Button *button);
   void handlePlayerScreen(Button *button);
+  void handleBestOfScreen(Button *button);
   void handlePointsScreen(Button *button);
   void handleGameScreen(int idx, Button *button);
   void handleDoneScreen(Button *button);
+  void processGameTurn();
 
 public:
   /**

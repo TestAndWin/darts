@@ -144,7 +144,7 @@ Button **Darts::drawScreenDone() {
   for (int i = 0; i < numberPlayer; i++) {
     Serial.println(totalPlayerPoints[i]);
     Serial.println(totalPlayerThrows[i]);
-    sprintf(str, "P%d avg: %d", i, ((totalPlayerPoints[i] / totalPlayerThrows[i]) * 3));
+    sprintf(str, "P%d avg: %d", (i + 1), ((totalPlayerPoints[i] / totalPlayerThrows[i]) * 3));
     tft.drawString(str, 15, 80 + (i * 26));
   }
 

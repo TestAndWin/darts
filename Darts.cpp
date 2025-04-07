@@ -63,8 +63,11 @@ Button **Darts::drawScreenPlayer() {
   drawScreenTitle("Number of Players");
 
   buttonCount = 0;
-  buttons[buttonCount++] = new Button(tft, "1 Player", 100, 100);
-  buttons[buttonCount++] = new Button(tft, "2 Player", 100, 140);
+  char str[2];
+  for (int i = 0; i < MAX_PLAYERS; i++) {
+    sprintf(str, "%d", i + 1);
+    buttons[buttonCount++] = new Button(tft, str, 100, 60 + (i * 40));
+  }
   return buttons;
 }
 
@@ -72,9 +75,9 @@ Button **Darts::drawScreenBestOf() {
   drawScreenTitle("Best of");
 
   buttonCount = 0;
-  buttons[buttonCount++] = new Button(tft, "Best of 1", 100, 100);
-  buttons[buttonCount++] = new Button(tft, "Best of 3", 100, 140);
-  buttons[buttonCount++] = new Button(tft, "Best of 5", 100, 180);
+  buttons[buttonCount++] = new Button(tft, "1", 100, 60);
+  buttons[buttonCount++] = new Button(tft, "3", 100, 100);
+  buttons[buttonCount++] = new Button(tft, "5", 100, 140);
   return buttons;
 }
 
@@ -90,22 +93,16 @@ Button **Darts::drawScreenPoints() {
 }
 
 Button **Darts::drawScreenGame() {
-  char str[20];
+  char str[40];
   sprintf(str, "Game - Best of %d", bestOf);
   drawScreenTitle(str);
   tft.setTextColor(TFT_BLACK);
   tft.setTextDatum(ML_DATUM);
 
-  for (int i = 0; i < numberPlayer; i++) {
-    sprintf(str, "P%d (%d): %d", i + 1, playerSets[i], playerPoints[i]);
-    tft.drawString(str, 15, 40 + (i * 26));
-    if (i == currentPlayer) {
-      tft.drawString("*", 5, 40 + (i * 26));
-      sprintf(str, "%d - %d (%d)", throwNumber, currentPoints, playerPoints[i] - currentPoints);
-      tft.drawString(str, 180, 40 + (i * 26));
-    }
-  }
+  sprintf(str, "Player %d: %d - %d (%d) | %d/%d", (currentPlayer + 1), throwNumber, currentPoints, playerPoints[currentPlayer] - currentPoints, playerSets[currentPlayer], (((bestOf + 1) / 2)));
+  tft.drawString(str, 10, 50);
 
+  // Player 1:
   buttonCount = 0;
   buttons[buttonCount++] = new Button(tft, "0", 20, 100);
   // The buttons 1-20 must in in index at place 1-20, or the handle function must be changed.
@@ -156,7 +153,7 @@ Button **Darts::drawScreenDone() {
 void Darts::handleButton(int idx, Button *button) {
   switch (currentScreen) {
     case SCREEN_START: handleStartScreen(button); break;
-    case SCREEN_PLAYER: handlePlayerScreen(button); break;
+    case SCREEN_PLAYER: handlePlayerScreen(idx, button); break;
     case SCREEN_BEST_OF: handleBestOfScreen(button); break;
     case SCREEN_POINTS: handlePointsScreen(button); break;
     case SCREEN_GAME: handleGameScreen(idx, button); break;
@@ -168,24 +165,23 @@ void Darts::handleStartScreen(Button *button) {
   nextScreen = SCREEN_PLAYER;
 }
 
-void Darts::handlePlayerScreen(Button *button) {
-  if (strcmp(button->getLabel(), "1 Player") == 0) {
-    numberPlayer = 1;
+void Darts::handlePlayerScreen(int idx, Button *button) {
+  numberPlayer = idx + 1;
+  if (numberPlayer == 1) {
     // Single player goes directly to points
     nextScreen = SCREEN_POINTS;
-  } else if (strcmp(button->getLabel(), "2 Player") == 0) {
-    numberPlayer = 2;
-    // Two players go to best of selection
+  } else {
+    // Two players or more go to best of selection
     nextScreen = SCREEN_BEST_OF;
   }
 }
 
 void Darts::handleBestOfScreen(Button *button) {
-  if (strcmp(button->getLabel(), "Best of 1") == 0) {
+  if (strcmp(button->getLabel(), "1") == 0) {
     bestOf = 1;
-  } else if (strcmp(button->getLabel(), "Best of 3") == 0) {
+  } else if (strcmp(button->getLabel(), "3") == 0) {
     bestOf = 3;
-  } else if (strcmp(button->getLabel(), "Best of 5") == 0) {
+  } else if (strcmp(button->getLabel(), "5") == 0) {
     bestOf = 5;
   }
   nextScreen = SCREEN_POINTS;

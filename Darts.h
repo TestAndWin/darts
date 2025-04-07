@@ -13,7 +13,7 @@ enum Screen {
   SCREEN_DONE = 6
 };
 const uint8_t MAX_BUTTONS = 25;
-const uint8_t MAX_PLAYERS = 2;
+const uint8_t MAX_PLAYERS = 4;
 
 class Darts {
 private:
@@ -56,7 +56,7 @@ private:
   void nextPlayer();
   void drawScreenTitle(const char *title);
   void handleStartScreen(Button *button);
-  void handlePlayerScreen(Button *button);
+  void handlePlayerScreen(int idx, Button *button);
   void handleBestOfScreen(Button *button);
   void handlePointsScreen(Button *button);
   void handleGameScreen(int idx, Button *button);

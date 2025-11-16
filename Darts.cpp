@@ -22,6 +22,22 @@ void Darts::init() {
   drawScreen();
 }
 
+void Darts::getGameStatus(char* status) {
+  if (currentScreen != SCREEN_GAME) {
+    sprintf(status, "Game not started");
+    return;
+  }
+  
+  sprintf(status, "Player %d: %d - %d (%d) | %d/%d", 
+    (currentPlayer + 1), 
+    throwNumber, 
+    currentPoints, 
+    playerPoints[currentPlayer] - currentPoints, 
+    playerSets[currentPlayer], 
+    (((bestOf + 1) / 2))
+  );
+}
+
 void Darts::cleanupButtons() {
   for (int i = 0; i < buttonCount; i++) {
     delete buttons[i];

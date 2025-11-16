@@ -2,7 +2,10 @@
 #include <TFT_eSPI.h>
 #include <User_Setup.h>
 #include <SPI.h>
+#include <WiFi.h>
+#include <WebServer.h>
 #include "Darts.h"
+#include "wifi_config.h"
 
 #define ETOUCH_MOSI 32
 #define ETOUCH_MISO 39
@@ -11,6 +14,8 @@
 #define ETOUCH_IRQ 0xff
 #define TFT_BL 21
 
+WebServer server(80);
+
 SPIClass hSPI(HSPI);
 TFT_eSPI tft;
 TFT_eTouch<TFT_eSPI> touch(tft, ETOUCH_CS, ETOUCH_IRQ, hSPI);
@@ -18,6 +23,21 @@ Darts* game;
 
 void setup() {
   Serial.begin(115200);
+  
+  // Connect to WiFi
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("");
+  Serial.print("Connected to WiFi. IP address: ");
+  Serial.println(WiFi.localIP());
+  
+  // Setup web server
+  server.on("/", handleRoot);
+  server.begin();
+  
   hSPI.begin(ETOUCH_SCK, ETOUCH_MISO, ETOUCH_MOSI, ETOUCH_CS);
   tft.begin();
   touch.init();
@@ -36,6 +56,9 @@ void setup() {
 }
 
 void loop() {
+  // Handle web server client requests
+  server.handleClient();
+  
   static uint32_t last_update = 0;
   if (last_update + touch.getMeasureWait() > millis())
     return;
@@ -66,4 +89,30 @@ void loop() {
   if (game->getCurrentScreen() != game->getNextScreen()) {
     game->drawScreen();
   }
+}
+
+void handleRoot() {
+  char html[1000];
+  char gameStatus[200];
+  game->getGameStatus(gameStatus);
+  
+  snprintf(html, sizeof(html),
+    "<html>\
+    <head>\
+      <title>Darts Game Status</title>\
+      <meta http-equiv='refresh' content='2'>\
+      <style>\
+        body { font-family: Arial, sans-serif; margin: 40px; }\
+        .status { font-size: 24px; padding: 20px; background: #f0f0f0; border-radius: 8px; }\
+      </style>\
+    </head>\
+    <body>\
+      <h1>Darts Game Status</h1>\
+      <div class='status'>%s</div>\
+    </body>\
+    </html>",
+    gameStatus
+  );
+  
+  server.send(200, "text/html", html);
 }

@@ -127,6 +127,12 @@ public:
   Button **getButtons() {
     return buttons;
   }
+
+  /**
+   * @brief Gets the current game status as a formatted string.
+   * @param status Buffer to store the status string.
+   */
+  void getGameStatus(char* status);
 };
 
 #endif

@@ -16,6 +16,7 @@ void Darts::init() {
   bestOf = 0;
   for (int i = 0; i < MAX_PLAYERS; i++) {
     playerSets[i] = 0;
+    playerPoints[i] = 0;
     totalPlayerThrows[i] = 0;
     totalPlayerPoints[i] = 0;
   }
@@ -27,15 +28,89 @@ void Darts::getGameStatus(char* status) {
     sprintf(status, "Game not started");
     return;
   }
-  
-  sprintf(status, "Player %d: %d - %d (%d) | %d/%d", 
-    (currentPlayer + 1), 
-    throwNumber, 
-    currentPoints, 
-    playerPoints[currentPlayer] - currentPoints, 
-    playerSets[currentPlayer], 
+
+  sprintf(status, "Player %d: %d - %d (%d) | %d/%d",
+    (currentPlayer + 1),
+    throwNumber,
+    currentPoints,
+    playerPoints[currentPlayer] - currentPoints,
+    playerSets[currentPlayer],
     (((bestOf + 1) / 2))
   );
+}
+
+void Darts::getPlayerStatus(char* status, int playerIndex) {
+  if (currentScreen != SCREEN_GAME) {
+    sprintf(status, "Game not started");
+    return;
+  }
+
+  // Check if this is the current player to show throw info
+  if (playerIndex == currentPlayer) {
+    sprintf(status, "Player %d: %d - %d (%d) | %d/%d",
+      (playerIndex + 1),
+      throwNumber,
+      currentPoints,
+      playerPoints[playerIndex] - currentPoints,
+      playerSets[playerIndex],
+      (((bestOf + 1) / 2))
+    );
+  } else {
+    sprintf(status, "Player %d: 0 - 0 (%d) | %d/%d",
+      (playerIndex + 1),
+      playerPoints[playerIndex],
+      playerSets[playerIndex],
+      (((bestOf + 1) / 2))
+    );
+  }
+}
+
+int Darts::getNumberOfPlayers() {
+  return numberPlayer;
+}
+
+int Darts::getCurrentPlayer() {
+  return currentPlayer;
+}
+
+int Darts::getThrowNumber() {
+  return throwNumber;
+}
+
+int Darts::getCurrentPoints() {
+  return currentPoints;
+}
+
+int Darts::getPlayerPoints(int playerIndex) {
+  if (playerIndex >= 0 && playerIndex < MAX_PLAYERS) {
+    return playerPoints[playerIndex];
+  }
+  return 0;
+}
+
+int Darts::getPlayerSets(int playerIndex) {
+  if (playerIndex >= 0 && playerIndex < MAX_PLAYERS) {
+    return playerSets[playerIndex];
+  }
+  return 0;
+}
+
+int Darts::getSetsNeeded() {
+  return (bestOf + 1) / 2;
+}
+
+int Darts::getTotalPlayerPoints(int playerIndex) {
+  if (playerIndex >= 0 && playerIndex < MAX_PLAYERS) {
+    return totalPlayerPoints[playerIndex];
+  }
+  return 0;
+}
+
+int Darts::getTotalPlayerThrows(int playerIndex) {
+  if (playerIndex >= 0 && playerIndex < MAX_PLAYERS) {
+    return totalPlayerThrows[playerIndex];
+  }
+  return 0;
 }
 
 void Darts::cleanupButtons() {
@@ -62,7 +137,7 @@ Button **Darts::drawScreen() {
 
 void Darts::drawScreenTitle(const char *title) {
   tft.fillScreen(TFT_WHITE);
-  tft.setTextColor(TFT_GOLD);
+  tft.setTextColor(TFT_BLUE);
   tft.setTextDatum(MC_DATUM);
   tft.drawString(title, tft.getViewportWidth() / 2, 14);
 }
@@ -157,12 +232,12 @@ Button **Darts::drawScreenDone() {
   for (int i = 0; i < numberPlayer; i++) {
     Serial.println(totalPlayerPoints[i]);
     Serial.println(totalPlayerThrows[i]);
-    sprintf(str, "P%d avg: %d", (i + 1), ((totalPlayerPoints[i] / totalPlayerThrows[i]) * 3));
+    sprintf(str, "P%d avg: %d", (i + 1), ((totalPlayerPoints[i] * 3) / totalPlayerThrows[i]));
     tft.drawString(str, 15, 80 + (i * 26));
   }
 
   buttonCount = 0;
-  buttons[buttonCount++] = new Button(tft, "Next Round", tft.getViewportWidth() / 2, 180);
+  buttons[buttonCount++] = new Button(tft, "Next Round", tft.getViewportWidth() / 2, 190);
   return buttons;
 }
 

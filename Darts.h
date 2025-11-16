@@ -133,6 +133,71 @@ public:
    * @param status Buffer to store the status string.
    */
   void getGameStatus(char* status);
+
+  /**
+   * @brief Gets the status of a specific player as a formatted string.
+   * @param status Buffer to store the status string.
+   * @param playerIndex Index of the player (0-based).
+   */
+  void getPlayerStatus(char* status, int playerIndex);
+
+  /**
+   * @brief Gets the number of players in the current game.
+   * @return The number of players.
+   */
+  int getNumberOfPlayers();
+
+  /**
+   * @brief Gets the index of the current player.
+   * @return The current player index (0-based).
+   */
+  int getCurrentPlayer();
+
+  /**
+   * @brief Gets the throw number for the current throw.
+   * @return The throw number (0-3).
+   */
+  int getThrowNumber();
+
+  /**
+   * @brief Gets the points scored in the current throw.
+   * @return The current points.
+   */
+  int getCurrentPoints();
+
+  /**
+   * @brief Gets the remaining points for a specific player.
+   * @param playerIndex Index of the player (0-based).
+   * @return The remaining points.
+   */
+  int getPlayerPoints(int playerIndex);
+
+  /**
+   * @brief Gets the number of sets won by a specific player.
+   * @param playerIndex Index of the player (0-based).
+   * @return The number of sets won.
+   */
+  int getPlayerSets(int playerIndex);
+
+  /**
+   * @brief Gets the number of sets needed to win.
+   * @return The sets needed to win the match.
+   */
+  int getSetsNeeded();
+
+  /**
+   * @brief Gets the total points scored by a specific player.
+   * @param playerIndex Index of the player (0-based).
+   * @return The total points scored.
+   */
+  int getTotalPlayerPoints(int playerIndex);
+
+  /**
+   * @brief Gets the total number of throws by a specific player.
+   * @param playerIndex Index of the player (0-based).
+   * @return The total number of throws.
+   */
+  int getTotalPlayerThrows(int playerIndex);
 };
 
 #endif

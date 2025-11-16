@@ -1,7 +1,12 @@
 # Introduction
-This project implements a darts scoring system using an ESP32 development board with a 2.4" TFT touch display (CYD - Cheap Yellow Display). 
-The system uses the TFT_eSPI library for display handling and TFT_eTouch for touch input processing. 
+This project implements a darts scoring system using an ESP32 development board with a 2.4" TFT touch display (CYD - Cheap Yellow Display).
+The system uses the TFT_eSPI library for display handling and TFT_eTouch for touch input processing.
 The hardware setup includes a 320x240 ILI9341 display with touch capabilities, making it perfect for interactive dart score tracking.
+
+Additionally, the system provides a built-in web server that allows you to view the live scoreboard on any device connected to the same network. The web interface automatically refreshes and displays:
+* Live game scoreboard with current player, throw number, and remaining points
+* Real-time updates every 2 seconds during gameplay
+* Game statistics and winner announcement when the game is finished
 
 ![Display Image](darts.png)
 

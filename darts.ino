@@ -3,8 +3,11 @@
 #include <User_Setup.h>
 #include <SPI.h>
 #include <WiFi.h>
+#include <FS.h>
+using fs::FS;
 #include <WebServer.h>
 #include "Darts.h"
+#include "webview.h"
 #include "wifi_config.h"
 
 #define ETOUCH_MOSI 32
@@ -23,7 +26,8 @@ Darts* game;
 
 void setup() {
   Serial.begin(115200);
-  
+  Serial.println("Start");
+
   // Connect to WiFi
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   while (WiFi.status() != WL_CONNECTED) {
@@ -38,6 +42,7 @@ void setup() {
   server.on("/", handleRoot);
   server.begin();
   
+  Serial.println("Start Touch");
   hSPI.begin(ETOUCH_SCK, ETOUCH_MISO, ETOUCH_MOSI, ETOUCH_CS);
   tft.begin();
   touch.init();
@@ -51,6 +56,7 @@ void setup() {
   // 16px - see user_setup.h
   tft.setTextFont(4);
 
+  Serial.println("Start game");
   game = new Darts(tft);
   game->init();
 }
@@ -92,27 +98,6 @@ void loop() {
 }
 
 void handleRoot() {
-  char html[1000];
-  char gameStatus[200];
-  game->getGameStatus(gameStatus);
-  
-  snprintf(html, sizeof(html),
-    "<html>\
-    <head>\
-      <title>Darts Game Status</title>\
-      <meta http-equiv='refresh' content='2'>\
-      <style>\
-        body { font-family: Arial, sans-serif; margin: 40px; }\
-        .status { font-size: 24px; padding: 20px; background: #f0f0f0; border-radius: 8px; }\
-      </style>\
-    </head>\
-    <body>\
-      <h1>Darts Game Status</h1>\
-      <div class='status'>%s</div>\
-    </body>\
-    </html>",
-    gameStatus
-  );
-  
+  String html = generateGameHTML(game);
   server.send(200, "text/html", html);
 }
